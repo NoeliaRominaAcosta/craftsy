@@ -7,7 +7,7 @@
 
 
 <body class="register">
-    <%- include('./partials/header') %> 
+    <%- include('./partials/header-admin') %> 
 
     <main>
         <section>
@@ -23,10 +23,12 @@
                 <div class="register__form-box">
                     <label for="name">Nombre del producto</label>
                     <input class="register__form-input" type="text" id="name" name="name" value="<%= product.name %>">
+                    <span class="text-danger"><%= locals.errors && errors.name ? errors.name.msg : null%> </span>
                 </div>
                 <div class="register__form-box">
                     <label for="price">Precio</label>
                     <input class="register__form-input" type="number" id="price" name="price" value="<%= product.price %>">
+                    <span class="text-danger"><%= locals.errors && errors.price ? errors.price.msg : null%> </span>
                 </div>
          
                 <div class="register__form-box">
@@ -39,6 +41,7 @@
                               <option value="<%= category.id %>" <%= category.id === product.category ? 'selected' : null %>><%= category.name %></option>
                             <% }) %>
                           </select>
+                          <span class="text-danger"><%= locals.errors && errors.category ? errors.category.msg : null%> </span>
                 </div>
                 <div class="register__form-box">
                     <label for="origin">Origen</label>
@@ -47,7 +50,9 @@
                         <option value="brasil" <%= product.features[0].toLowerCase() === "brasil" && 'selected' %> >Brasil</option>
                         <option value="estados unidos" <%= product.features[0].toLowerCase() === "estados unidos" && 'selected' %> >Estados Unidos</option>
                         <option value="taiwan" <%= product.features[0].toLowerCase() === "taiwan" && 'selected' %> >Taiwan</option>
+                       
                     </select>
+                    <span class="text-danger"><%= locals.errors && errors.origin ? errors.origin.msg : null%> </span>
                 </div>
                 <div class="register__form-box">
                     <label for="state">Estado</label>
@@ -55,6 +60,7 @@
                         <option value="nuevo" <%= product.features[1].toLowerCase() === "nuevo" && 'selected' %>>Nuevo</option>
                         <option value="refaccionado" <%= product.features[1].toLowerCase() === "refaccionado" && 'selected' %>>Refaccionado</option>
                     </select>
+                    <span class="text-danger"><%= locals.errors && errors.state ? errors.state.msg : null%> </span>
                 </div>
                 <div class="register__form-box">
                     <label for="image">Imagen</label>

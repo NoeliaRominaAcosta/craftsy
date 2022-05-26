@@ -1,7 +1,7 @@
-const res = require('express/lib/response');
+const { validationResult } = require('express-validator')
 const fs = require('fs');
 const path = require('path');
-
+/**path para construir la ruta */
 const categories = require('../data/categories');
 const products = require('../data/products.json');
 
@@ -12,9 +12,13 @@ module.exports = {
         })
     },
     store : (req,res) => {
-        /**req.body devuelve un objeto con las claves y valor del formulario */
+        let errors = validationResult(req)
+        //lo que el metodo recupera del pedido, el request. validationResult es un objeto
+        if(errors.isEmpty()) {
+        /**req.body devuelve un objeto con clave y valor. estos son los name del formulario */
         let {name,price,category,state,origin} = req.body;
         let lastID = products[products.length - 1].id;
+        let images = req.files.map(image => image.filename)
         /**Para que lo que agregue no sea diferente al formato que ya existe de array de objetos
          *  en data Vamos a usar el último id del array de productos en su propiedad length y se coloca
          *  length -1 para localizar la longitud total menos uno y el id es lo que necesito buscar */
@@ -24,7 +28,7 @@ module.exports = {
             name : name.trim(),
             price: +price,
             category: +category,
-            img: req.file ? req.file.filename : "noimage.jpeg",
+            img : images.length > 0 ? images : ["noimage.jpeg"],
             features : [origin,state]
         }
 
@@ -33,6 +37,15 @@ module.exports = {
         fs.writeFileSync(path.resolve(__dirname,'..','data','products.json'),JSON.stringify(products,null,3),'utf-8')
 
         return res.redirect('/')
+        }else{
+            return res.render('productAdd',{
+                categories,
+                errors : errors.mapped(),
+                old : req.body    //mando lo que se respondió bien
+            })
+                //mapped convierte en objeto al array de errores
+        }
+       
           /* le asigno las propiedades que tendrá, siguiendo las mismas claves que el json 
         Recordar que todo lo que viene por req.body viene como string, viaja como json POR ESO lo parseamos con +*/
        /* usamos JSON.stringify y pasamos el products, un null y un 3 para darle una identación . Voy a aclarar la ruta con path,
@@ -50,7 +63,8 @@ module.exports = {
         })
     },
     update : (req,res) => {
-
+        let errors = validationResult(req)
+        if(errors.isEmpty()) {
         const {id} = req.params;
         let {name, price, category,state,origin} = req.body;
 
@@ -77,13 +91,17 @@ module.exports = {
         fs.writeFileSync(path.resolve(__dirname,'..','data','products.json'),JSON.stringify(productsModify,null,3),'utf-8')
 
         return res.redirect('/')
-    },
+    }else{
+        return res.render('productEdit',{
+            categories,
+            product : req.body,
+            //no es old porque me pide que sea product en el error
+            errors : errors.mapped()
+        })
+    }
+},
     detail : (req,res) => {
-        /**si el idProduct que viene de la ruta product.js y es parametro de detail que esta en
-         * index.ejs  <a href="/products/detail/1"> coincide con el id que tiene product en el 
-         * array de productos requerido de data, va a renderizar la vista productDetail y va a mandar
-         * el producto en la tabla
-         */
+        
         const {id} = req.params;
         const product = products.find(product => product.id === +id);
         
@@ -140,5 +158,10 @@ module.exports = {
 
         return res.redirect('/')
 
+    },
+    list : (req,res) => {
+        return res.render('admin/adminProducts',{
+            products
+        })
     }
 }

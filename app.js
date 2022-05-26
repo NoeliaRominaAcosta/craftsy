@@ -9,7 +9,7 @@ const methodOverride = require('method-override');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const productsRouter = require('./routes/products');
-
+const categoriesRouter = require('./routes/categories')
 var app = express();
 
 // view engine setup
@@ -28,13 +28,8 @@ app.use(methodOverride('_method'));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
+app.use('/categories', categoriesRouter)
 
-
-/* app.get('/',(req,res) => res.sendFile(path.resolve(__dirname,'views','index.html')));
-app.get('/product-detail',(req,res) => res.sendFile(path.resolve(__dirname,'views','productDetail.html')));
-app.get('/product-cart',(req,res) => res.sendFile(path.resolve(__dirname,'views','productCart.html')));
-app.get('/register',(req,res) => res.sendFile(path.resolve(__dirname,'views','register.html')));
-app.get('/login',(req,res) => res.sendFile(path.resolve(__dirname,'views','login.html'))); */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
