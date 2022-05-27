@@ -6,6 +6,9 @@ var logger = require('morgan');
 
 const methodOverride = require('method-override');
 
+const session = require('express-session')
+
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const productsRouter = require('./routes/products');
@@ -16,19 +19,20 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+//configurations
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+//static resources
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(methodOverride('_method'));
-
+app.use(session({secret : "Craftsy secret message", resave : false, saveUninitialized: true, cookie:{}}));
+//routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
-app.use('/categories', categoriesRouter)
+app.use('/categories', categoriesRouter);
 
 
 // catch 404 and forward to error handler
